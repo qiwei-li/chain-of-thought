@@ -1,49 +1,57 @@
 import time
+import re
+import requests
+from bs4 import BeautifulSoup
 
-def basic(inputIDs):
-    import re
-    import requests
-    from bs4 import BeautifulSoup
-
-    ids = []
-    titles = []
+def basic(inputID):
     authors = []
-    dates = []
     base ="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber="
 
-    for inputID in inputIDs:
-        ids.append(inputID)
-        url = base + str(inputID)
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content)
 
-        try:
-            title = soup.find('div', {'class': 'title'}).text.replace('\n', '').replace('\t', '')
-        except:
-            title = 'NA'
-        titles.append(title)
+    url = base + str(inputID)
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content)
 
-        try:
-            author = soup.find_all('span', {'id': 'preferredName'})
-            tmp = []
-            for item in author:
-                tmp.append(str(item).replace('<span class="','').replace('" id="preferredName"></span>',''))
-        except:
-            author = 'NA'
-        authors.append('; '.join(list(set(tmp))))
+    try:
+        title = soup.find('div', {'class': 'title'}).text.replace('\n', '').replace('\t', '')
+    except:
+        title = ''
 
-        try:
-            date = str(soup.find_all('dl')[1]).split('Date')[1].replace('\n','').replace('\t','').split('<dd>')[1].split('</dd>')[0]
-        except:
-            date = 'NA'
-        dates.append(date)
-
-    return [ids, titles, authors, dates]
+    try:
+        author = soup.find_all('span', {'id': 'preferredName'})
+        tmp = []
+        for item in author:
+            tmp.append(str(item).replace('<span class="','').replace('" id="preferredName"></span>',''))
+    except:
+        author = ''
+    authors.append('; '.join(list(set(tmp))))
 
 
-id = range(4492360, 4492370)
+    try:
+        date = str(soup.find_all('dl')[1]).split('Date')[1].replace('\n','').replace('\t','').split('<dd>')[1].split('</dd>')[0]
+    except:
+        date = ''
+
+    try:
+
+        punumber = str(soup.find_all('a', {'href': re.compile('punumber')})[1]).split('number=')[1].split('">')[0]
+    except:
+        punumber = ''
+
+    return {'title':title,
+            'authors':authors,
+            'date':date,
+            'punumber':punumber}
+
+
+
+id = 4492360
+ans = basic(id)
+print(ans)
+"""
 start_time = time.time()
 ans = basic(id)
 end_time = time.time()
 print(ans)
 print end_time - start_time
+"""
