@@ -44,14 +44,8 @@ def basic(inputID):
             'punumber':punumber}
 
 
-
+"""
 id = 4492360
 ans = basic(id)
 print(ans)
-"""
-start_time = time.time()
-ans = basic(id)
-end_time = time.time()
-print(ans)
-print end_time - start_time
 """
