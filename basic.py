@@ -28,12 +28,17 @@ def basic(inputID):
 
 
     try:
-        date = str(soup.find_all('dl')[1]).split('Date')[1].replace('\n','').replace('\t','').split('<dd>')[1].split('</dd>')[0]
+        s = str(soup.find_all('dl')).replace("\\n","").replace("\\t","")
+        d4 = re.findall(r"\D(\d{4})\D", s)
+        ll = []
+        for item in d4:
+            if(int(item) > 1900 and int(item) <= 2016):
+                ll.append(item)
+        date = min(ll)
     except:
         date = ''
 
     try:
-
         punumber = str(soup.find_all('a', {'href': re.compile('punumber')})[1]).split('number=')[1].split('">')[0]
     except:
         punumber = ''
