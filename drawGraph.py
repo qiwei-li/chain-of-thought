@@ -279,3 +279,5 @@ def createGraph(infile, seed, flag):
 
 if __name__ == "__main__":
 	pass
+
+createGraph("refs_7037476_20_5.p",	7037476)
